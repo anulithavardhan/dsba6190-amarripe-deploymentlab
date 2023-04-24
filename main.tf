@@ -24,7 +24,7 @@ resource "random_integer" "deployment_id_suffix" {
 // Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.class_name}-amarripe-${var.environment}-03-rg"
+  name     = "${var.class_name}-amarripe-${var.environment}-04-rg"
   location = var.location
 
   tags = local.tags
@@ -50,7 +50,7 @@ resource "azurerm_application_insights" "example" {
 }
 
 resource "azurerm_key_vault" "example" {
-  name                = "anu-workspacevault-new3"
+  name                = "anu-workspacevault-new4"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_subscription.current.tenant_id
@@ -125,7 +125,7 @@ resource "azurerm_app_service_plan" "webapp_plan" {
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                = "amarripe-webapp"
+  name                = "amarripe-webapp-new"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.webapp_plan.id
@@ -134,11 +134,32 @@ resource "azurerm_app_service" "webapp" {
 output "webapp_url" {
   value = azurerm_app_service.webapp.default_site_hostname
 }
-resource "azurerm_function_app" "function_app" {
-  name                       = "amarripe-function-app"
-  location                   = azurerm_resource_group.rg.location
-  resource_group_name        = azurerm_resource_group.rg.name
-  app_service_plan_id        = azurerm_app_service_plan.webapp_plan.id
-  storage_account_name       = azurerm_storage_account.storage.name
-  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+resource "azurerm_public_ip" "firewall_public_ip" {
+  name                = "amarripe-firewall-pip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+
+  tags = local.tags
 }
+
+// Azure Firewall
+
+resource "azurerm_firewall" "firewall" {
+  name                = "amarripe-firewall"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "AZFW_Hub"
+  ip_configuration {
+    name                          = "amarripe-firewall-ip"
+    subnet_id                     = var.subnet_id
+    public_ip_address_id          = azurerm_public_ip.firewall_public_ip.id
+    provisioning_state_transition = "Succeeded"
+  }
+
+  tags = local.tags
+}
+In the code above, the "azurerm_resource_group" resource creates a new resource group with the name "amarripe-firewall-rg". The "azurerm_public_ip" resource creates a new public IP address with the name "amarripe-firewall-pip". The "azurerm_firewall" resource creates a new Azure Firewall with the name "amarripe-firewall". It uses the IP address created by the "azurerm_public_ip" resource and attaches it to the firewall's IP configuration. The "sku" property specifies the pricing tier of the firewall, and in this case, it uses the "AZFW_Hub" SKU, which is a cheaper option. Finally, the tags are defined in
+
+
+
