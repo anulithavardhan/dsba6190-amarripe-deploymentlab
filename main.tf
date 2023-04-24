@@ -24,7 +24,7 @@ resource "random_integer" "deployment_id_suffix" {
 // Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.class_name}-${var.student_name}-${var.environment}-96-rg"
+  name     = "${var.class_name}-${var.student_name}-${var.environment}-1996-rg"
   location = var.location
 
   tags = local.tags
