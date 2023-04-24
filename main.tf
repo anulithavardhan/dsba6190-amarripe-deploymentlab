@@ -159,7 +159,6 @@ resource "azurerm_firewall" "firewall" {
 
   tags = local.tags
 }
-In the code above, the "azurerm_resource_group" resource creates a new resource group with the name "amarripe-firewall-rg". The "azurerm_public_ip" resource creates a new public IP address with the name "amarripe-firewall-pip". The "azurerm_firewall" resource creates a new Azure Firewall with the name "amarripe-firewall". It uses the IP address created by the "azurerm_public_ip" resource and attaches it to the firewall's IP configuration. The "sku" property specifies the pricing tier of the firewall, and in this case, it uses the "AZFW_Hub" SKU, which is a cheaper option. Finally, the tags are defined in
 
 
 
