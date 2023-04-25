@@ -24,7 +24,7 @@ resource "random_integer" "deployment_id_suffix" {
 // Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.class_name}-amarripe-${var.environment}-05-rg"
+  name     = "${var.class_name}-amarripe-${var.environment}-06-rg"
   location = var.location
 
   tags = local.tags
@@ -50,7 +50,7 @@ resource "azurerm_application_insights" "example" {
 }
 
 resource "azurerm_key_vault" "example" {
-  name                = "anu-workspacevault-new5"
+  name                = "anu-workspacevault-new6"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_subscription.current.tenant_id
@@ -115,7 +115,7 @@ resource "azurerm_cosmosdb_account" "db" {
 }
 
 resource "azurerm_app_service_plan" "webapp_plan" {
-  name                = "webapp-plan-amarripe1"
+  name                = "webapp-plan-amarripe2"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku {
@@ -125,7 +125,7 @@ resource "azurerm_app_service_plan" "webapp_plan" {
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                = "amarripe-webapp-new1"
+  name                = "amarripe-webapp-new2"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.webapp_plan.id
@@ -134,26 +134,39 @@ resource "azurerm_app_service" "webapp" {
 output "webapp_url" {
   value = azurerm_app_service.webapp.default_site_hostname
 }
-resource "azurerm_resource_group" "example" {
-  name     = "amarripe-resource"
-  location = "West Europe"
+
+resource "azurerm_resource_group" "functionapp" {
+  name     = "amarripe-functions-test-rg"
+  location = "westus"
 }
 
-resource "azurerm_iotcentral_application" "example" {
-  name                = "amarripe-iotcentral-app"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  sub_domain          = "example-iotcentral-app-subdomain"
+resource "azurerm_storage_account" "functionapp" {
+  name                     = "functionsapptestsa"
+  resource_group_name      = azurerm_resource_group.functionapp.name
+  location                 = azurerm_resource_group.functionapp.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
 
-  display_name = "example-iotcentral-app-display-name"
-  sku          = "ST1"
-  template     = "iotc-default@1.0.0"
+resource "azurerm_app_service_plan" "example" {
+  name                = "amarripe-functions-service-plan"
+  location            = azurerm_resource_group.functionapp.location
+  resource_group_name = azurerm_resource_group.functionapp.name
 
-  tags = {
-    Foo = "Bar"
+  sku {
+    tier = "Standard"
+    size = "S1"
   }
 }
 
+resource "azurerm_function_app" "function-app" {
+  name                       = "amarripe-functions"
+  location                   = azurerm_resource_group.functionapp.location
+  resource_group_name        = azurerm_resource_group.functionapp.name
+  app_service_plan_id        = azurerm_app_service_plan.example.id
+  storage_account_name       = azurerm_storage_account.functionapp.name
+  storage_account_access_key = azurerm_storage_account.functionapp.primary_access_key
+}
 
 
 
