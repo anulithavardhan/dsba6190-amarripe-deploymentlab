@@ -24,7 +24,7 @@ resource "random_integer" "deployment_id_suffix" {
 // Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.class_name}-amarripe-${var.environment}-04-rg"
+  name     = "${var.class_name}-amarripe-${var.environment}-05-rg"
   location = var.location
 
   tags = local.tags
@@ -50,7 +50,7 @@ resource "azurerm_application_insights" "example" {
 }
 
 resource "azurerm_key_vault" "example" {
-  name                = "anu-workspacevault-new4"
+  name                = "anu-workspacevault-new5"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_subscription.current.tenant_id
@@ -115,7 +115,7 @@ resource "azurerm_cosmosdb_account" "db" {
 }
 
 resource "azurerm_app_service_plan" "webapp_plan" {
-  name                = "webapp-plan-amarripe"
+  name                = "webapp-plan-amarripe1"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku {
@@ -125,7 +125,7 @@ resource "azurerm_app_service_plan" "webapp_plan" {
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                = "amarripe-webapp-new"
+  name                = "amarripe-webapp-new1"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.webapp_plan.id
@@ -134,31 +134,27 @@ resource "azurerm_app_service" "webapp" {
 output "webapp_url" {
   value = azurerm_app_service.webapp.default_site_hostname
 }
-resource "azurerm_public_ip" "firewall_public_ip" {
-  name                = "amarripe-firewall-pip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-
-  tags = local.tags
+resource "azurerm_resource_group" "example" {
+  name     = "amarripe-resource"
+  location = "West Europe"
 }
 
-// Azure Firewall
+resource "azurerm_iotcentral_application" "example" {
+  name                = "amarripe-iotcentral-app"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sub_domain          = "example-iotcentral-app-subdomain"
 
-resource "azurerm_firewall" "firewall" {
-  name                = "amarripe-firewall"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  sku                 = "AZFW_Hub"
-  ip_configuration {
-    name                          = "amarripe-firewall-ip"
-    subnet_id                     = var.subnet_id
-    public_ip_address_id          = azurerm_public_ip.firewall_public_ip.id
-    provisioning_state_transition = "Succeeded"
+  display_name = "example-iotcentral-app-display-name"
+  sku          = "ST1"
+  template     = "iotc-default@1.0.0"
+
+  tags = {
+    Foo = "Bar"
   }
-
-  tags = local.tags
 }
+
+
 
 
 
