@@ -24,7 +24,7 @@ resource "random_integer" "deployment_id_suffix" {
 // Resource Group
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.class_name}-amarripe-${var.environment}-06-rg"
+  name     = "${var.class_name}-amarripe-${var.environment}-07-rg"
   location = var.location
 
   tags = local.tags
@@ -50,7 +50,7 @@ resource "azurerm_application_insights" "example" {
 }
 
 resource "azurerm_key_vault" "example" {
-  name                = "anu-workspacevault-new6"
+  name                = "anu-workspacevault-new7"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_subscription.current.tenant_id
@@ -115,7 +115,7 @@ resource "azurerm_cosmosdb_account" "db" {
 }
 
 resource "azurerm_app_service_plan" "webapp_plan" {
-  name                = "webapp-plan-amarripe2"
+  name                = "webapp-plan-amarripe3"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku {
@@ -125,7 +125,7 @@ resource "azurerm_app_service_plan" "webapp_plan" {
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                = "amarripe-webapp-new2"
+  name                = "amarripe-webapp-new3"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.webapp_plan.id
@@ -141,7 +141,7 @@ resource "azurerm_resource_group" "functionapp" {
 }
 
 resource "azurerm_storage_account" "functionapp" {
-  name                     = "functionsapptestsa"
+  name                     = "amarripefunctionapp"
   resource_group_name      = azurerm_resource_group.functionapp.name
   location                 = azurerm_resource_group.functionapp.location
   account_tier             = "Standard"
