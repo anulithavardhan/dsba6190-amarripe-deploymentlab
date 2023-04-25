@@ -135,23 +135,11 @@ output "webapp_url" {
   value = azurerm_app_service.webapp.default_site_hostname
 }
 
-resource "azurerm_resource_group" "functionapp" {
-  name     = "amarripe-functions-test-rg"
-  location = "westus"
-}
 
-resource "azurerm_storage_account" "functionapp" {
-  name                     = "amarripefunctionapp"
-  resource_group_name      = azurerm_resource_group.functionapp.name
-  location                 = azurerm_resource_group.functionapp.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurerm_app_service_plan" "example" {
-  name                = "amarripe-functions-service-plan"
-  location            = azurerm_resource_group.functionapp.location
-  resource_group_name = azurerm_resource_group.functionapp.name
+resource "azurerm_app_service_plan" "functionapp" {
+  name                = "amarripe-functions-service-plan2"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
   sku {
     tier = "Standard"
@@ -159,13 +147,13 @@ resource "azurerm_app_service_plan" "example" {
   }
 }
 
-resource "azurerm_function_app" "function-app" {
+resource "azurerm_function_app" "functionapp" {
   name                       = "amarripe-functions"
-  location                   = azurerm_resource_group.functionapp.location
-  resource_group_name        = azurerm_resource_group.functionapp.name
-  app_service_plan_id        = azurerm_app_service_plan.example.id
-  storage_account_name       = azurerm_storage_account.functionapp.name
-  storage_account_access_key = azurerm_storage_account.functionapp.primary_access_key
+  location                   = azurerm_resource_group.rg.location
+  resource_group_name        = azurerm_resource_group.rg.name
+  app_service_plan_id        = azurerm_app_service_plan.functionapp.id
+  storage_account_name       = azurerm_storage_account.storage.name
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
 }
 
 
